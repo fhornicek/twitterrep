@@ -1,19 +1,23 @@
 const express = require('express')
 const fs = require('fs')
+const path = require('path')
 const cors = require('cors')
 const app = express()
 
-const PORT = 3001
-const TWEETS_FILE = './tweets.json'
-const USERS_FILE = './users.json'
+const PORT = process.env.PORT || 3001
+
+// Absolutní cesta k souborům v rámci projektu (např. ./data/tweets.json)
+const DATA_DIR = path.join(__dirname, 'data')
+const TWEETS_FILE = path.join(DATA_DIR, 'tweets.json')
+const USERS_FILE = path.join(DATA_DIR, 'users.json')
 
 app.use(cors())
 app.use(express.json())
 
 // Pomocná funkce pro načtení JSON souboru (uživatelů nebo tweetů)
-function readJsonFile(path) {
+function readJsonFile(filePath) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, (err, data) => {
+    fs.readFile(filePath, (err, data) => {
       if (err) {
         if (err.code === 'ENOENT') return resolve([]) // pokud soubor neexistuje, vrátíme prázdné pole
         return reject(err)
@@ -29,11 +33,15 @@ function readJsonFile(path) {
 }
 
 // Pomocná funkce pro zápis JSON do souboru
-function writeJsonFile(path, data) {
+function writeJsonFile(filePath, data) {
   return new Promise((resolve, reject) => {
-    fs.writeFile(path, JSON.stringify(data, null, 2), err => {
-      if (err) reject(err)
-      else resolve()
+    // Ujisti se, že složka data existuje
+    fs.mkdir(DATA_DIR, { recursive: true }, err => {
+      if (err) return reject(err)
+      fs.writeFile(filePath, JSON.stringify(data, null, 2), err => {
+        if (err) reject(err)
+        else resolve()
+      })
     })
   })
 }
@@ -110,5 +118,5 @@ app.post('/tweets', async (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Server běží na http://localhost:${PORT}`)
+  console.log(`Server běží na portu ${PORT}`)
 })
