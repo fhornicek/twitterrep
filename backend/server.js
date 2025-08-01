@@ -3,25 +3,20 @@ const cors = require('cors')
 const fetch = require('node-fetch')
 const app = express()
 
-// 👉 Port musí být buď z `process.env.PORT` (Render), nebo 3001 (lokálně)
 const PORT = process.env.PORT || 3001
 
-// ✅ CORS – nutné pro přístup z frontendu
 const corsOptions = {
-  origin: '*', // Povolí přístup ze všech domén – pro vývoj
+  origin: '*', // pro vývoj, později můžeš zpřísnit
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type']
 }
 app.use(cors(corsOptions))
-
-// ✅ JSON parser pro POST requesty
 app.use(express.json())
 
-// JSONBin nastavení
 const USERS_BIN_ID = '688c63c4ae596e708fbf3971'
 const TWEETS_BIN_ID = '688c650e7b4b8670d8aad1da'
-const BASE_URL_USERS = `https://api.jsonbin.io/v3/b/688c63c4ae596e708fbf3971`
-const BASE_URL_TWEETS = `https://api.jsonbin.io/v3/b/688c650e7b4b8670d8aad1da`
+const BASE_URL_USERS = `https://api.jsonbin.io/v3/b/${USERS_BIN_ID}`
+const BASE_URL_TWEETS = `https://api.jsonbin.io/v3/b/${TWEETS_BIN_ID}`
 
 const MASTER_KEY = '$2a$10$5QGUCbSuKovBlRFj409BQuGr/opjAU7/LU.i8HJ7D.6CvIYKlkAWq'
 
@@ -30,7 +25,6 @@ const HEADERS = {
   'Content-Type': 'application/json'
 }
 
-// 📦 Pomocné funkce
 async function getJsonFromBin(url) {
   const res = await fetch(url, { headers: HEADERS })
   if (!res.ok) throw new Error('Chyba při načítání dat')
@@ -42,19 +36,17 @@ async function putJsonToBin(url, data) {
   const res = await fetch(url, {
     method: 'PUT',
     headers: HEADERS,
-    body: JSON.stringify({ record: data }) // 🔥 DŮLEŽITÉ! JSONBin vyžaduje klíč `record`
+    body: JSON.stringify({ record: data }) // JSONBin vyžaduje objekt s klíčem record
   })
   if (!res.ok) throw new Error('Chyba při ukládání dat')
   return await res.json()
 }
 
-// 🔐 LOGIN
 app.post('/login', async (req, res) => {
   const { username, password } = req.body
   if (!username || !password) {
     return res.status(400).json({ success: false, message: 'Chybí username nebo password' })
   }
-
   try {
     const users = await getJsonFromBin(BASE_URL_USERS)
     const user = users.find(u => u.username === username && u.password === password)
@@ -69,13 +61,11 @@ app.post('/login', async (req, res) => {
   }
 })
 
-// 🧾 REGISTRACE
 app.post('/register', async (req, res) => {
   const { username, password } = req.body
   if (!username || !password) {
     return res.status(400).json({ success: false, message: 'Chybí username nebo password' })
   }
-
   try {
     const users = await getJsonFromBin(BASE_URL_USERS)
     if (users.some(u => u.username === username)) {
@@ -90,7 +80,6 @@ app.post('/register', async (req, res) => {
   }
 })
 
-// 🐦 Získání všech tweetů
 app.get('/tweets', async (req, res) => {
   try {
     const tweets = await getJsonFromBin(BASE_URL_TWEETS)
@@ -101,13 +90,11 @@ app.get('/tweets', async (req, res) => {
   }
 })
 
-// 📝 Přidání tweetu
 app.post('/tweets', async (req, res) => {
   const newTweet = req.body
   if (!newTweet || !newTweet.text || !newTweet.user) {
     return res.status(400).send('Neplatná data tweetu.')
   }
-
   try {
     const tweets = await getJsonFromBin(BASE_URL_TWEETS)
     tweets.push(newTweet)
@@ -119,7 +106,6 @@ app.post('/tweets', async (req, res) => {
   }
 })
 
-// ✅ Start serveru
 app.listen(PORT, () => {
   console.log(`✅ Server běží na http://localhost:${PORT}`)
 })
