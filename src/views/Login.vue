@@ -44,7 +44,7 @@ async function register() {
 
   loading.value = true
   try {
-    await axios.post('http://localhost:3001/register', {
+    await axios.post('https://twitterrep.onrender.com/register', {
       username: username.value,
       password: password.value
     })
