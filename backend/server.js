@@ -27,10 +27,18 @@ const HEADERS = {
 }
 
 async function getJsonFromBin(url) {
-  const res = await fetch(url, { headers: HEADERS })
-  if (!res.ok) throw new Error('Chyba při načítání dat')
-  const data = await res.json()
-  return data.record || []
+  const res = await fetch(url, { headers: HEADERS });
+  if (!res.ok) throw new Error('Chyba při načítání dat');
+  const data = await res.json();
+
+  if (Array.isArray(data.record)) {
+    return data.record;
+  } else if (data.record && typeof data.record === 'object') {
+
+    return Object.keys(data.record).length ? [data.record] : [];
+  } else {
+    return [];
+  }
 }
 
 async function putJsonToBin(url, data) {
