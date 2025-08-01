@@ -5,6 +5,14 @@ const app = express()
 
 const PORT = 3001
 
+const corsOptions = {
+    origin: '*', // Pokud testuješ
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+  }
+  
+  app.use(cors(corsOptions))
+
 // ID tvých JSON binů (vyměň za své skutečné!)
 const USERS_BIN_ID = '688c63c4ae596e708fbf3971'   // tvůj bin s tweety
 const TWEETS_BIN_ID = '688c650e7b4b8670d8aad1da'            // tvůj bin s uživateli
