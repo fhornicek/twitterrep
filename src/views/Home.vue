@@ -17,7 +17,7 @@ const tweets = ref([])
 // Načíst tweety při načtení stránky
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:3001/tweets')
+    const res = await axios.get('https://twitterrep.onrender.com/tweets')
     tweets.value = res.data
   } catch (error) {
     console.error('Chyba při načítání tweetů:', error)
@@ -38,7 +38,7 @@ async function addTweet(text) {
   }
 
   try {
-    const res = await axios.post('http://localhost:3001/tweets', newTweet)
+    const res = await axios.post('https://twitterrep.onrender.com/tweets', newTweet)
     tweets.value.push(res.data) // očekáváme, že backend vrátí uložený tweet
   } catch (error) {
     console.error('Chyba při ukládání tweetu:', error)

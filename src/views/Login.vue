@@ -22,7 +22,7 @@ async function login() {
   
   loading.value = true
   try {
-    const res = await axios.post('http://localhost:3001/login', {
+    const res = await axios.post('https://twitterrep.onrender.com/login', {
       username: username.value,
       password: password.value
     })
