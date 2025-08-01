@@ -14,10 +14,10 @@ const BASE_URL_TWEETS = `https://api.jsonbin.io/v3/b/688c650e7b4b8670d8aad1da`
 const BASE_URL_USERS = `https://api.jsonbin.io/v3/b/688c63c4ae596e708fbf3971`
 
 // Vlož svůj X-Master-Key (tajný klíč pro zápis)
-const MASTER_KEY = 'TVŮJ_MASTEŘ_KLÍČ'
+const MASTER_KEY = '$2a$10$5QGUCbSuKovBlRFj409BQuGr/opjAU7/LU.i8HJ7D.6CvIYKlkAWq'
 
 const HEADERS = {
-  'X-Master-Key': '$2a$10$5QGUCbSuKovBlRFj409BQuGr/opjAU7/LU.i8HJ7D.6CvIYKlkAWq',
+  'X-Master-Key': MASTER_KEY,
   'Content-Type': 'application/json'
 }
 
